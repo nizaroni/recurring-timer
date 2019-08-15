@@ -11,7 +11,7 @@ let [
 	volume = 1,
 ] = process.argv
 
-// second argument could be the volume
+// second argument could be the volume instead of the sound file
 if (isNumber(soundFile)) {
 	volume = soundFile
 	soundFile = defaultSound
@@ -20,17 +20,35 @@ if (isNumber(soundFile)) {
 const options = { afplay: ['--volume', volume] }
 
 let count = 1
-log(`⏲  waiting for timer #${count}...`)
+let remainingTime = minutes * 60
+let isRinging = false
+showCountdown()
 
 setInterval(function interval() {
-	log(`🔔 timer #${count}`)
+	remainingTime -= 1
 
-	player.play(soundFile,  options, function callback(error) {
+	if (remainingTime > 0) {
+		if (!isRinging) {
+			showCountdown()
+		}
+		return
+	}
+
+	remainingTime = minutes * 60
+	isRinging = true
+
+	log(`🔔 timer #${count}`)
+	player.play(soundFile, options, function callback(error) {
 		if (error) {
 			throw error
 		}
 
 		count += 1
-		log(`⏲  waiting for timer #${count}...`)
+		isRinging = false
 	})
-}, minutes * 60 * 1000)
+}, 1000)
+
+
+function showCountdown() {
+	log(`⏲  ${remainingTime} until timer #${count}...`)
+}
