@@ -1,13 +1,23 @@
 const player = require('play-sound')()
 const log = require('single-line-log').stdout
+const isNumber = require('is-number')
 
-const [
+const defaultSound = `${__dirname}/pew.mp3`
+
+let [
 	,,
 	minutes = 5,
-	soundFile = `${__dirname}/pew.mp3`,
+	soundFile = defaultSound,
+	volume = 1,
 ] = process.argv
 
-const options = { afplay: ['--volume', 1.5] }
+// second argument could be the volume
+if (isNumber(soundFile)) {
+	volume = soundFile
+	soundFile = defaultSound
+}
+
+const options = { afplay: ['--volume', volume] }
 
 let count = 1
 log(`⏲  waiting for timer #${count}...`)
