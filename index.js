@@ -1,6 +1,7 @@
 const player = require('play-sound')()
 const log = require('single-line-log').stdout
 const isNumber = require('is-number')
+const format = require('format-duration')
 
 const defaultSound = `${__dirname}/pew.mp3`
 
@@ -17,11 +18,13 @@ if (isNumber(soundFile)) {
 	soundFile = defaultSound
 }
 
+const totalSeconds = minutes * 60
 const options = { afplay: ['--volume', volume] }
 
+let remainingTime = totalSeconds
 let count = 1
-let remainingTime = minutes * 60
 let isRinging = false
+
 showCountdown()
 
 setInterval(function interval() {
@@ -34,7 +37,7 @@ setInterval(function interval() {
 		return
 	}
 
-	remainingTime = minutes * 60
+	remainingTime = totalSeconds
 	isRinging = true
 
 	log(`🔔 timer #${count}`)
@@ -50,5 +53,6 @@ setInterval(function interval() {
 
 
 function showCountdown() {
-	log(`⏲  ${remainingTime} until timer #${count}...`)
+	const prettyTime = format(remainingTime * 1000)
+	log(`⏲  ${prettyTime} until timer #${count}...`)
 }
